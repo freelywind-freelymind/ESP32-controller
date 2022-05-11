@@ -1,0 +1,27 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: xtensa-esp32-elf-gcc.exe build active file",
+			"command": "C:/Users/KenYuen/.platformio/packages/toolchain-xtensa32/bin/xtensa-esp32-elf-gcc.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"${file}",
+				"-o",
+				"${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"-mlongcalls",
+				""
+			],
+			"options": {
+				"cwd": "C:/Users/KenYuen/.platformio/packages/toolchain-xtensa32/bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: C:/Users/KenYuen/.platformio/packages/toolchain-xtensa32/bin/xtensa-esp32-elf-gcc.exe"
+		}
+	]
+}
