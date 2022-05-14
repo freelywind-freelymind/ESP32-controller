@@ -8,7 +8,8 @@
 #define butt4_pin 19
 
 // REPLACE WITH YOUR RECEIVER MAC Address
-uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+uint8_t upperAddress[] = {0x58, 0xBF, 0x25, 0x18, 0xB4, 0x84};
+uint8_t chassisAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 typedef struct struct_message {
   int butt_no;
@@ -17,7 +18,8 @@ typedef struct struct_message {
 // Create a struct_message called myData
 struct_message myData;
 
-esp_now_peer_info_t peerInfo;
+esp_now_peer_info_t peerInfo_upper;
+esp_now_peer_info_t peerInfo_chassis;
 
 // callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
@@ -41,53 +43,96 @@ void setup() {
   esp_now_register_send_cb(OnDataSent);
   
   // Register peer
-  memcpy(peerInfo.peer_addr, broadcastAddress, 6);
-  peerInfo.channel = 0;  
-  peerInfo.encrypt = false;
+  memcpy(peerInfo_upper.peer_addr, upperAddress, 6);
+  peerInfo_upper.channel = 0;  
+  peerInfo_upper.encrypt = false;
+
+  memcpy(peerInfo_chassis.peer_addr, chassisAddress, 6);
+  peerInfo_chassis.channel = 1;  
+  peerInfo_chassis.encrypt = false;
   
   // Add peer        
-  if (esp_now_add_peer(&peerInfo) != ESP_OK){
+  if (esp_now_add_peer(&peerInfo_upper) != ESP_OK){
     Serial.println("Failed to add peer");
     return;
   }
 
-  pinMode(butt1_pin, INPUT);
-  pinMode(butt2_pin, INPUT);
-  pinMode(butt3_pin, INPUT);
-  pinMode(butt4_pin, INPUT);
+  if (esp_now_add_peer(&peerInfo_chassis) != ESP_OK){
+    Serial.println("Failed to add peer");
+    return;
+  }
+
+  pinMode(butt1_pin, INPUT_PULLDOWN);
+  pinMode(butt2_pin, INPUT_PULLDOWN);
+  pinMode(butt3_pin, INPUT_PULLDOWN);
+  pinMode(butt4_pin, INPUT_PULLDOWN);
+
+  attachInterrupt(digitalPinToInterrupt(butt1_pin), butt1_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(butt2_pin), butt2_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(butt3_pin), butt3_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(butt4_pin), butt4_interrupt, RISING);
 }
 
 void loop() {
-  bool flag = false;
-
-  if(digitalRead(butt1_pin)){
-    myData.butt_no = 1;
-    flag =true;
-  } else if(digitalRead(butt2_pin)){
-    myData.butt_no = 2;
-    flag =true;
-  } else if(digitalRead(butt3_pin)){
-    myData.butt_no = 3;
-    flag =true;
-  } else if(digitalRead(butt4_pin)){
-    myData.butt_no = 4;
-    flag =true;
-  }
-
-  if(flag){
-    Serial.printf("Button %d had been pressed.", myData.butt_no);
-
-    // Send message via ESP-NOW
-    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-    
-    if (result == ESP_OK) {
-      Serial.println("Sent with success");
-    }
-    else {
-      Serial.println("Error sending the data");
-    }
-  }
-
-  //update freq 1000Hz
   delay(1);
+}
+
+void butt1_interrupt(){
+  myData.butt_no = '1';
+  Serial.printf("Button %d had been pressed.", myData.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
+    
+  if (result == ESP_OK) {
+    Serial.println("Sent with success");
+  }
+  else {
+    Serial.println("Error sending the data");
+  }
+}
+
+void butt2_interrupt(){
+  myData.butt_no = '2';
+  Serial.printf("Button %d had been pressed.", myData.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
+    
+  if (result == ESP_OK) {
+    Serial.println("Sent with success");
+  }
+  else {
+    Serial.println("Error sending the data");
+  }
+}
+
+void butt3_interrupt(){
+  myData.butt_no = '3';
+  Serial.printf("Button %d had been pressed.", myData.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
+    
+  if (result == ESP_OK) {
+    Serial.println("Sent with success");
+  }
+  else {
+    Serial.println("Error sending the data");
+  }
+}
+
+void butt4_interrupt(){
+  myData.butt_no = '4';
+  Serial.printf("Button %d had been pressed.", myData.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
+    
+  if (result == ESP_OK) {
+    Serial.println("Sent with success");
+  }
+  else {
+    Serial.println("Error sending the data");
+  }
 }
