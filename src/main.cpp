@@ -5,7 +5,7 @@
 // Structure example to receive data
 // Must match the sender structure
 typedef struct struct_message {
-    int butt_no;
+    char butt_no;
 } struct_message;
 
 // Create a struct_message called myData
@@ -27,13 +27,13 @@ void setup() {
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
 
-  /*Serial.println(WiFi.macAddress());
+  //Serial.println(WiFi.macAddress());
 
   // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
-    Serial.println("Error initializing ESP-NOW");
+    //Serial.println("Error initializing ESP-NOW");
     return;
-  }*/
+  }
   
   // Once ESPNow is successfully Init, we will register for recv CB to
   // get recv packer info
