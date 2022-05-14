@@ -12,7 +12,7 @@ uint8_t upperAddress[] = {0x58, 0xBF, 0x25, 0x18, 0xB4, 0x84};
 uint8_t chassisAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 typedef struct struct_message {
-  int butt_no;
+  char butt_no;
 } struct_message;
 
 // Create a struct_message called myData
@@ -25,56 +25,6 @@ esp_now_peer_info_t peerInfo_chassis;
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
-}
-
-void setup() {
-  Serial.begin(115200);
-  WiFi.mode(WIFI_STA);
-  Serial.println(WiFi.macAddress());
-
-  // Init ESP-NOW
-  if (esp_now_init() != ESP_OK) {
-    Serial.println("Error initializing ESP-NOW");
-    return;
-  }
-
-  // Once ESPNow is successfully Init, we will register for Send CB to
-  // get the status of Trasnmitted packet
-  esp_now_register_send_cb(OnDataSent);
-  
-  // Register peer
-  memcpy(peerInfo_upper.peer_addr, upperAddress, 6);
-  peerInfo_upper.channel = 0;  
-  peerInfo_upper.encrypt = false;
-
-  memcpy(peerInfo_chassis.peer_addr, chassisAddress, 6);
-  peerInfo_chassis.channel = 1;  
-  peerInfo_chassis.encrypt = false;
-  
-  // Add peer        
-  if (esp_now_add_peer(&peerInfo_upper) != ESP_OK){
-    Serial.println("Failed to add peer");
-    return;
-  }
-
-  if (esp_now_add_peer(&peerInfo_chassis) != ESP_OK){
-    Serial.println("Failed to add peer");
-    return;
-  }
-
-  pinMode(butt1_pin, INPUT_PULLDOWN);
-  pinMode(butt2_pin, INPUT_PULLDOWN);
-  pinMode(butt3_pin, INPUT_PULLDOWN);
-  pinMode(butt4_pin, INPUT_PULLDOWN);
-
-  attachInterrupt(digitalPinToInterrupt(butt1_pin), butt1_interrupt, RISING);
-  attachInterrupt(digitalPinToInterrupt(butt2_pin), butt2_interrupt, RISING);
-  attachInterrupt(digitalPinToInterrupt(butt3_pin), butt3_interrupt, RISING);
-  attachInterrupt(digitalPinToInterrupt(butt4_pin), butt4_interrupt, RISING);
-}
-
-void loop() {
-  delay(1);
 }
 
 void butt1_interrupt(){
@@ -135,4 +85,54 @@ void butt4_interrupt(){
   else {
     Serial.println("Error sending the data");
   }
+}
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.mode(WIFI_STA);
+  Serial.println(WiFi.macAddress());
+
+  // Init ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+
+  // Once ESPNow is successfully Init, we will register for Send CB to
+  // get the status of Trasnmitted packet
+  esp_now_register_send_cb(OnDataSent);
+  
+  // Register peer
+  memcpy(peerInfo_upper.peer_addr, upperAddress, 6);
+  peerInfo_upper.channel = 0;  
+  peerInfo_upper.encrypt = false;
+
+  memcpy(peerInfo_chassis.peer_addr, chassisAddress, 6);
+  peerInfo_chassis.channel = 1;  
+  peerInfo_chassis.encrypt = false;
+  
+  // Add peer        
+  if (esp_now_add_peer(&peerInfo_upper) != ESP_OK){
+    Serial.println("Failed to add peer");
+    return;
+  }
+
+  if (esp_now_add_peer(&peerInfo_chassis) != ESP_OK){
+    Serial.println("Failed to add peer");
+    return;
+  }
+
+  pinMode(butt1_pin, INPUT_PULLDOWN);
+  pinMode(butt2_pin, INPUT_PULLDOWN);
+  pinMode(butt3_pin, INPUT_PULLDOWN);
+  pinMode(butt4_pin, INPUT_PULLDOWN);
+
+  attachInterrupt(digitalPinToInterrupt(butt1_pin), butt1_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(butt2_pin), butt2_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(butt3_pin), butt3_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(butt4_pin), butt4_interrupt, RISING);
+}
+
+void loop() {
+  delay(1);
 }
