@@ -1,26 +1,32 @@
 #include <Arduino.h>
 #include <esp_now.h>
 #include <WiFi.h>
+#include "pinmap.h"
+#include "joystick_update.h"
 
-#define butt1_pin 32
-#define butt2_pin 33
-#define butt3_pin 25
-#define butt4_pin 26
-#define butt5_pin 23
-#define butt6_pin 22
-#define butt7_pin 21
-#define butt8_pin 19
+float X_axis;
+float Y_axis;
+float W_axis;
+
+TaskHandle_t Task2;
+SemaphoreHandle_t batton;
 
 // REPLACE WITH YOUR RECEIVER MAC Address
 uint8_t upperAddress[] = {0x58, 0xBF, 0x25, 0x18, 0xB4, 0x84};
 uint8_t chassisAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
-typedef struct struct_message {
+typedef struct upper_msg {
   char butt_no;
-} struct_message;
+} upper_msg;
 
-// Create a struct_message called myData
-struct_message myData;
+typedef struct chassis_msg {
+  float x_axis;
+  float y_axis;
+  float w_axis;
+} chassis_msg;
+
+upper_msg upper_order;
+chassis_msg chassis_order;
 
 esp_now_peer_info_t peerInfo_upper;
 esp_now_peer_info_t peerInfo_chassis;
@@ -31,123 +37,154 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
-void butt1_interrupt(){
-  myData.butt_no = '1';
-  Serial.printf("Button %d had been pressed.", myData.butt_no);
+void L1_interrupt(){
+  upper_order.butt_no = '1';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
 
   // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
-    
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void L2_interrupt(){
+  upper_order.butt_no = '2';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void up_interrupt(){
+  upper_order.butt_no = '3';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  if (max_speed <= 3.0) {
+    max_speed += 0.5;
   }
-  else {
-    Serial.println("Error sending the data");
+  
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void left_interrupt(){
+  upper_order.butt_no = '4';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void down_interrupt(){
+  upper_order.butt_no = '5';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  if (max_speed >= 1.0) {
+    max_speed -= 0.5;
   }
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void right_interrupt(){
+  upper_order.butt_no = '6';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
 }
 
-void butt2_interrupt(){
-  myData.butt_no = '2';
-  Serial.printf("Button %d had been pressed.", myData.butt_no);
+void R1_interrupt(){
+  upper_order.butt_no = '7';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
 
   // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
-    
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-    Serial.println("Error sending the data");
-  }
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void R2_interrupt(){
+  upper_order.butt_no = '8';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void triangle_interrupt(){
+  upper_order.butt_no = '9';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void circle_interrupt(){
+  upper_order.butt_no = 'a';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void square_interrupt(){
+  upper_order.butt_no = 'b';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void cross_interrupt(){
+  upper_order.butt_no = 'c';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
 }
 
-void butt3_interrupt(){
-  myData.butt_no = '3';
-  Serial.printf("Button %d had been pressed.", myData.butt_no);
+void question_interrupt(){
+  upper_order.butt_no = 'd';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
 
   // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
-    
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-    Serial.println("Error sending the data");
-  }
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+}
+void estop_interrupt(){
+  upper_order.butt_no = 'x';
+  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
 }
 
-void butt4_interrupt(){
-  myData.butt_no = '4';
-  Serial.printf("Button %d had been pressed.", myData.butt_no);
+void Task2code( void * pvParameters ){
+  //pinMode(L1_pin, INPUT_PULLDOWN);
+  //pinMode(L2_pin, INPUT_PULLDOWN);
+  pinMode(up_pin, INPUT_PULLDOWN);
+  pinMode(left_pin, INPUT_PULLDOWN);
+  pinMode(down_pin, INPUT_PULLDOWN);
+  pinMode(right_pin, INPUT_PULLDOWN);
 
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
-    
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-    Serial.println("Error sending the data");
-  }
-}
+  pinMode(R1_pin, INPUT_PULLDOWN);
+  pinMode(R2_pin, INPUT_PULLDOWN);
+  pinMode(triangle_pin, INPUT_PULLDOWN);
+  pinMode(circle_pin, INPUT_PULLDOWN);
+  pinMode(square_pin, INPUT_PULLDOWN);
+  pinMode(cross_pin, INPUT_PULLDOWN);
 
-void butt5_interrupt(){
-  myData.butt_no = '5';
-  Serial.printf("Button %d had been pressed.", myData.butt_no);
+  pinMode(question_pin, INPUT_PULLDOWN);
+  pinMode(estop_pin, INPUT_PULLDOWN);
 
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
-    
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-    Serial.println("Error sending the data");
-  }
-}
+  attachInterrupt(digitalPinToInterrupt(L1_pin), L1_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(L2_pin), L2_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(up_pin), up_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(left_pin), left_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(down_pin), down_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(right_pin), right_interrupt, RISING);
 
-void butt6_interrupt(){
-  myData.butt_no = '6';
-  Serial.printf("Button %d had been pressed.", myData.butt_no);
+  attachInterrupt(digitalPinToInterrupt(R1_pin), R1_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(R2_pin), R2_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(triangle_pin), triangle_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(circle_pin), circle_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(square_pin), square_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(cross_pin), cross_interrupt, RISING);
 
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
-    
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-    Serial.println("Error sending the data");
-  }
-}
+  attachInterrupt(digitalPinToInterrupt(question_pin), question_interrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(estop_pin), estop_interrupt, RISING);
 
-void butt7_interrupt(){
-  myData.butt_no = '7';
-  Serial.printf("Button %d had been pressed.", myData.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
-    
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-    Serial.println("Error sending the data");
-  }
-}
-
-void butt8_interrupt(){
-  myData.butt_no = '8';
-  Serial.printf("Button %d had been pressed.", myData.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &myData, sizeof(myData));
-    
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-    Serial.println("Error sending the data");
+  while(true){
+    xSemaphoreAltTake(batton, portMAX_DELAY);
+    xSemaphoreAltGive(batton);
+    delay(1);
   }
 }
 
@@ -166,45 +203,82 @@ void setup() {
   // get the status of Trasnmitted packet
   esp_now_register_send_cb(OnDataSent);
   
-  // Register peer
-  memcpy(peerInfo_upper.peer_addr, upperAddress, 6);
   peerInfo_upper.channel = 0;  
   peerInfo_upper.encrypt = false;
-
-  memcpy(peerInfo_chassis.peer_addr, chassisAddress, 6);
-  peerInfo_chassis.channel = 1;  
-  peerInfo_chassis.encrypt = false;
   
+  // Register peer
+  memcpy(peerInfo_upper.peer_addr, upperAddress, 6);
   // Add peer        
   if (esp_now_add_peer(&peerInfo_upper) != ESP_OK){
     Serial.println("Failed to add peer");
     return;
   }
 
+  memcpy(peerInfo_chassis.peer_addr, chassisAddress, 6);
   if (esp_now_add_peer(&peerInfo_chassis) != ESP_OK){
     Serial.println("Failed to add peer");
     return;
   }
 
-  pinMode(butt1_pin, INPUT_PULLUP);
-  pinMode(butt2_pin, INPUT_PULLUP);
-  pinMode(butt3_pin, INPUT_PULLUP);
-  pinMode(butt4_pin, INPUT_PULLUP);
-  pinMode(butt5_pin, INPUT_PULLUP);
-  pinMode(butt6_pin, INPUT_PULLUP);
-  pinMode(butt7_pin, INPUT_PULLUP);
-  pinMode(butt8_pin, INPUT_PULLUP);
+  xTaskCreatePinnedToCore(
+    Task2code,   /* Task function. */
+    "Task2",     /* name of task. */
+    10000,       /* Stack size of task */
+    NULL,        /* parameter of the task */
+    1,           /* priority of the task */
+    &Task2,      /* Task handle to keep track of created task */
+    0);          /* pin task to core 1 */
+  delay(500);
 
-  attachInterrupt(digitalPinToInterrupt(butt1_pin), butt1_interrupt, FALLING);
-  attachInterrupt(digitalPinToInterrupt(butt2_pin), butt2_interrupt, FALLING);
-  attachInterrupt(digitalPinToInterrupt(butt3_pin), butt3_interrupt, FALLING);
-  attachInterrupt(digitalPinToInterrupt(butt4_pin), butt4_interrupt, FALLING);
-  attachInterrupt(digitalPinToInterrupt(butt5_pin), butt1_interrupt, FALLING);
-  attachInterrupt(digitalPinToInterrupt(butt6_pin), butt2_interrupt, FALLING);
-  attachInterrupt(digitalPinToInterrupt(butt7_pin), butt3_interrupt, FALLING);
-  attachInterrupt(digitalPinToInterrupt(butt8_pin), butt4_interrupt, FALLING);
+  pinMode(Ljoystick_x_pin, INPUT);
+  pinMode(Ljoystick_y_pin, INPUT);
+  //pinMode(Rjoystick_x_pin, INPUT);
+  //pinMode(Rjoystick_y_pin, INPUT);
 }
 
 void loop() {
-  delay(1);
+
+  joystick_update();
+
+  if(digitalRead(up_pin)){
+    up_interrupt();
+  }
+  
+  if(digitalRead(down_pin)){
+    down_interrupt();
+  }
+
+  xSemaphoreAltTake(batton, portMAX_DELAY);
+  X_axis = soften_value(mapfloat(axis[2], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000;
+  Y_axis = soften_value(mapfloat(axis[3], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000;
+  W_axis = soften_value(mapfloat(axis[0], -2048, 2047, -max_rotation_speed, max_rotation_speed),softening, max_rotation_speed) * 1000;
+  xSemaphoreAltGive(batton);
+
+  if (abs(X_axis) < deadband){
+    X_axis = 0;
+  }
+  if (abs(Y_axis) < deadband){
+    Y_axis = 0;
+  }
+  if (abs(W_axis) < deadband){
+    W_axis = 0;
+  }
+
+  Serial.print("X:");
+  Serial.print(X_axis);
+  Serial.print(" Y:");
+  Serial.print(Y_axis);
+  Serial.print(" W:");
+  Serial.print(W_axis);
+  Serial.println("");
+
+  //update the msg of package
+  chassis_order.x_axis = X_axis;
+  chassis_order.y_axis = Y_axis;
+  chassis_order.w_axis = W_axis;
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(chassisAddress, (uint8_t *) &chassis_order, sizeof(chassis_order));
+
+  //update freq 100Hz
+  delay(10);
 }
