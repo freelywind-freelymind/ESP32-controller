@@ -86,13 +86,13 @@ void loop() {
     W_axis = 0;
   }
 
-  /*Serial.print("X:");
+  Serial.print("X:");
   Serial.print(X_axis);
   Serial.print(" Y:");
   Serial.print(Y_axis);
   Serial.print(" W:");
   Serial.print(W_axis);
-  Serial.println("");*/
+  Serial.println("");
 
   //update the msg of package
   chassis_order.x_axis = X_axis;
