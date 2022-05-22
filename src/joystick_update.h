@@ -1,11 +1,128 @@
 #include <Arduino.h>
 #include "pinmap.h"
 
+typedef struct upper_msg {
+  char butt_no;
+} upper_msg;
+
+upper_msg upper_order;
+
 int axis[4];
-volatile float softening = 0.2;
-volatile float max_speed = 1;
-volatile float max_rotation_speed = 1;
-int deadband = 110; 
+float X_axis;
+float Y_axis;
+float W_axis;
+
+float softening = 0.2;
+float max_speed = 1.0;
+float max_rotation_speed = 1.0;
+int deadband = 110;
+
+bool flag = false;
+bool* butt_flag = new bool[14]{false,false,false,false,false,false,false,
+                              false,false,false,false,false,false,false};
+
+void init_pinout(){
+  pinMode(L1_pin, INPUT_PULLDOWN);
+  pinMode(L2_pin, INPUT_PULLDOWN);
+  pinMode(up_pin, INPUT_PULLDOWN);
+  pinMode(down_pin, INPUT_PULLDOWN);
+  pinMode(left_pin, INPUT_PULLDOWN);
+  pinMode(right_pin, INPUT_PULLDOWN);
+
+  pinMode(R1_pin, INPUT_PULLDOWN);
+  pinMode(R2_pin, INPUT_PULLDOWN);
+  pinMode(triangle_pin, INPUT_PULLDOWN);
+  pinMode(circle_pin, INPUT_PULLDOWN);
+  pinMode(square_pin, INPUT_PULLDOWN);
+  pinMode(cross_pin, INPUT_PULLDOWN);
+
+  pinMode(question_pin, INPUT_PULLDOWN);
+  pinMode(estop_pin, INPUT_PULLDOWN);
+
+  pinMode(Ljoystick_x_pin, INPUT);
+  pinMode(Ljoystick_y_pin, INPUT);
+  pinMode(Rjoystick_x_pin, INPUT);
+  pinMode(Rjoystick_y_pin, INPUT);
+}
+
+void L1_interrupt(){
+  upper_order.butt_no = '1';
+  flag = true;
+}
+void L2_interrupt(){
+  upper_order.butt_no = '2';
+  flag = true;
+}
+void up_interrupt(){
+  upper_order.butt_no = '3';
+
+  if (max_speed <= 3.0) {
+    max_speed += 0.5;
+  }
+  
+  flag = true;
+}
+void left_interrupt(){
+  upper_order.butt_no = '4';
+
+  if (softening >= 0.05){
+    softening -= 0.2;
+  }
+
+  flag = true;
+}
+void down_interrupt(){
+  upper_order.butt_no = '5';
+
+  if (max_speed >= 1.0) {
+    max_speed -= 0.5;
+  }
+
+  flag = true;
+}
+void right_interrupt(){
+  upper_order.butt_no = '6';
+
+  if (softening <= 0.8){
+    softening += 0.2;
+  }
+
+  flag = true;
+}
+
+void R1_interrupt(){
+  upper_order.butt_no = '7';
+  flag = true;
+}
+void R2_interrupt(){
+  upper_order.butt_no = '8';
+  flag = true;
+}
+void triangle_interrupt(){
+  upper_order.butt_no = '9';
+  flag = true;
+}
+void circle_interrupt(){
+  upper_order.butt_no = 'a';
+  flag = true;
+}
+void square_interrupt(){
+  upper_order.butt_no = 'b';
+  flag = true;
+}
+void cross_interrupt(){
+  upper_order.butt_no = 'c';
+  flag = true;
+}
+
+void question_interrupt(){
+  upper_order.butt_no = 'd';
+  flag = true;
+}
+void estop_interrupt(){
+  upper_order.butt_no = 'x';
+  flag = true;
+}
 
 float mapfloat(long x, float in_min, float in_max, float out_min, float out_max)
 {
@@ -49,5 +166,159 @@ void joystick_update(){
   }
   else{
     axis[3] = 2047 - temp;
+  }
+
+  //debouncing
+  if(digitalRead(up_pin)){
+    if(!butt_flag[0]){
+      butt_flag[0] = !butt_flag[0];
+      up_interrupt();
+    }   
+  }
+  else{
+    butt_flag[0] = false;
+  }
+  
+  //debouncing
+  if(digitalRead(down_pin)){
+    if(!butt_flag[1]){
+      butt_flag[1] = !butt_flag[1];
+      down_interrupt();
+    }
+  }
+  else{
+    butt_flag[1] = false;
+  }
+
+  //debouncing
+  if(digitalRead(left_pin)){
+    if(!butt_flag[2]){
+      butt_flag[2] = !butt_flag[2];
+      left_interrupt();
+    }
+  }
+  else{
+    butt_flag[2] = false;
+  }
+
+  //debouncing
+  if(digitalRead(right_pin)){
+    if(!butt_flag[3]){
+      butt_flag[3] = !butt_flag[3];
+      right_interrupt();
+    }
+  }
+  else{
+    butt_flag[3] = false;
+  }
+
+  //debouncing
+  if(digitalRead(L1_pin)){
+    if(!butt_flag[4]){
+      butt_flag[4] = !butt_flag[4];
+      L1_interrupt();
+    }   
+  }
+  else{
+    butt_flag[4] = false;
+  }
+
+  //debouncing
+  if(digitalRead(L2_pin)){
+    if(!butt_flag[5]){
+      butt_flag[5] = !butt_flag[5];
+      L2_interrupt();
+    }   
+  }
+  else{
+    butt_flag[5] = false;
+  }
+
+  //debouncing
+  if(digitalRead(R1_pin)){
+    if(!butt_flag[6]){
+      butt_flag[6] = !butt_flag[6];
+      R1_interrupt();
+    }   
+  }
+  else{
+    butt_flag[6] = false;
+  }
+
+  //debouncing
+  if(digitalRead(R2_pin)){
+    if(!butt_flag[7]){
+      butt_flag[7] = !butt_flag[7];
+      R2_interrupt();
+    }   
+  }
+  else{
+    butt_flag[7] = false;
+  }
+
+  //debouncing
+  if(digitalRead(triangle_pin)){
+    if(!butt_flag[8]){
+      butt_flag[8] = !butt_flag[8];
+      triangle_interrupt();
+    }   
+  }
+  else{
+    butt_flag[8] = false;
+  }
+
+  //debouncing
+  if(digitalRead(circle_pin)){
+    if(!butt_flag[9]){
+      butt_flag[9] = !butt_flag[9];
+      circle_interrupt();
+    }   
+  }
+  else{
+    butt_flag[9] = false;
+  }
+
+  //debouncing
+  if(digitalRead(square_pin)){
+    if(!butt_flag[10]){
+      butt_flag[10] = !butt_flag[10];
+      square_interrupt();
+    }   
+  }
+  else{
+    butt_flag[10] = false;
+  }
+
+  //debouncing
+  if(digitalRead(cross_pin)){
+    if(!butt_flag[11]){
+      butt_flag[11] = !butt_flag[11];
+      cross_interrupt();
+    }   
+  }
+  else{
+    butt_flag[11] = false;
+  }
+
+  //debouncing
+  if(digitalRead(question_pin)){
+    if(!butt_flag[12]){
+      butt_flag[12] = !butt_flag[12];
+      question_interrupt();
+    }   
+  }
+  else{
+    butt_flag[12] = false;
+  }
+
+  //debouncing
+  if(digitalRead(estop_pin)){
+    if(!butt_flag[13]){
+      butt_flag[13] = !butt_flag[13];
+      estop_interrupt();
+    }   
+  }
+  else{
+    butt_flag[13] = false;
   }
 }
