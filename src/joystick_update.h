@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "pinmap.h"
+#include "buttCode.h"
 
 typedef struct upper_msg {
   char butt_no;
@@ -46,15 +47,15 @@ void init_pinout(){
 }
 
 void L1_interrupt(){
-  upper_order.butt_no = '1';
+  upper_order.butt_no = L1;
   flag = true;
 }
 void L2_interrupt(){
-  upper_order.butt_no = '2';
+  upper_order.butt_no = L2;
   flag = true;
 }
 void up_interrupt(){
-  upper_order.butt_no = '3';
+  upper_order.butt_no = up;
 
   if (max_speed <= 3.0) {
     max_speed += 0.5;
@@ -63,7 +64,7 @@ void up_interrupt(){
   flag = true;
 }
 void left_interrupt(){
-  upper_order.butt_no = '4';
+  upper_order.butt_no = left;
 
   if (softening >= 0.05){
     softening -= 0.2;
@@ -72,7 +73,7 @@ void left_interrupt(){
   flag = true;
 }
 void down_interrupt(){
-  upper_order.butt_no = '5';
+  upper_order.butt_no = down;
 
   if (max_speed >= 1.0) {
     max_speed -= 0.5;
@@ -81,7 +82,7 @@ void down_interrupt(){
   flag = true;
 }
 void right_interrupt(){
-  upper_order.butt_no = '6';
+  upper_order.butt_no = right;
 
   if (softening <= 0.8){
     softening += 0.2;
@@ -91,36 +92,36 @@ void right_interrupt(){
 }
 
 void R1_interrupt(){
-  upper_order.butt_no = '7';
+  upper_order.butt_no = R1;
   flag = true;
 }
 void R2_interrupt(){
-  upper_order.butt_no = '8';
+  upper_order.butt_no = R2;
   flag = true;
 }
 void triangle_interrupt(){
-  upper_order.butt_no = '9';
+  upper_order.butt_no = triangle;
   flag = true;
 }
 void circle_interrupt(){
-  upper_order.butt_no = 'a';
+  upper_order.butt_no = circle;
   flag = true;
 }
 void square_interrupt(){
-  upper_order.butt_no = 'b';
+  upper_order.butt_no = square;
   flag = true;
 }
 void cross_interrupt(){
-  upper_order.butt_no = 'c';
+  upper_order.butt_no = cross;
   flag = true;
 }
 
 void question_interrupt(){
-  upper_order.butt_no = 'd';
+  upper_order.butt_no = question;
   flag = true;
 }
 void estop_interrupt(){
-  upper_order.butt_no = 'x';
+  upper_order.butt_no = estop;
   flag = true;
 }
 
