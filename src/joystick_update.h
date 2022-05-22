@@ -2,10 +2,10 @@
 #include "pinmap.h"
 
 int axis[4];
-float softening = 0.2;
-float max_speed = 1;
-float max_rotation_speed = 1;
-int deadband = 100; 
+volatile float softening = 0.2;
+volatile float max_speed = 1;
+volatile float max_rotation_speed = 1;
+int deadband = 110; 
 
 float mapfloat(long x, float in_min, float in_max, float out_min, float out_max)
 {
@@ -35,19 +35,19 @@ void joystick_update(){
     axis[1] = 2047 - temp;
   }
 
-  //temp = analogRead(Rjoystick_x_pin);
-  //if(temp < 0) {
-  //  axis[2] = -(temp) - 2046;
-  //}
-  //else{
-  //  axis[2] = 2047 - temp;
-  //}
+  temp = analogRead(Rjoystick_x_pin);
+  if(temp < 0) {
+    axis[2] = -(temp) - 2046;
+  }
+  else{
+    axis[2] = 2047 - temp;
+  }
 
-  //temp = analogRead(Rjoystick_y_pin);
-  //if(temp < 0) {
-  //  axis[3] = -(temp) - 2046;
-  //}
-  //else{
-  //  axis[3] = 2047 - temp;
-  //}
+  temp = analogRead(Rjoystick_y_pin);
+  if(temp < 0) {
+    axis[3] = -(temp) - 2046;
+  }
+  else{
+    axis[3] = 2047 - temp;
+  }
 }

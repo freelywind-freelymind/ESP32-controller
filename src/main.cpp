@@ -8,8 +8,8 @@ float X_axis;
 float Y_axis;
 float W_axis;
 
+volatile bool flag = false;
 TaskHandle_t Task2;
-SemaphoreHandle_t batton;
 
 // REPLACE WITH YOUR RECEIVER MAC Address
 uint8_t upperAddress[] = {0x58, 0xBF, 0x25, 0x18, 0xB4, 0x84};
@@ -39,116 +39,76 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 
 void L1_interrupt(){
   upper_order.butt_no = '1';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void L2_interrupt(){
   upper_order.butt_no = '2';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void up_interrupt(){
   upper_order.butt_no = '3';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
 
   if (max_speed <= 3.0) {
     max_speed += 0.5;
   }
   
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void left_interrupt(){
   upper_order.butt_no = '4';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void down_interrupt(){
   upper_order.butt_no = '5';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
 
   if (max_speed >= 1.0) {
     max_speed -= 0.5;
   }
 
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void right_interrupt(){
   upper_order.butt_no = '6';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 
 void R1_interrupt(){
   upper_order.butt_no = '7';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void R2_interrupt(){
   upper_order.butt_no = '8';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void triangle_interrupt(){
   upper_order.butt_no = '9';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void circle_interrupt(){
   upper_order.butt_no = 'a';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void square_interrupt(){
   upper_order.butt_no = 'b';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void cross_interrupt(){
   upper_order.butt_no = 'c';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 
 void question_interrupt(){
   upper_order.butt_no = 'd';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 void estop_interrupt(){
   upper_order.butt_no = 'x';
-  //Serial.printf("Button %c had been pressed.", upper_order.butt_no);
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+  flag = true;
 }
 
 void Task2code( void * pvParameters ){
-  //pinMode(L1_pin, INPUT_PULLDOWN);
-  //pinMode(L2_pin, INPUT_PULLDOWN);
+  pinMode(L1_pin, INPUT_PULLDOWN);
+  pinMode(L2_pin, INPUT_PULLDOWN);
   pinMode(up_pin, INPUT_PULLDOWN);
   pinMode(left_pin, INPUT_PULLDOWN);
   pinMode(down_pin, INPUT_PULLDOWN);
@@ -182,14 +142,21 @@ void Task2code( void * pvParameters ){
   attachInterrupt(digitalPinToInterrupt(estop_pin), estop_interrupt, RISING);
 
   while(true){
-    xSemaphoreAltTake(batton, portMAX_DELAY);
-    xSemaphoreAltGive(batton);
+    if(flag){
+      Serial.printf("Button %c had been pressed.", upper_order.butt_no);
+
+      // Send message via ESP-NOW
+      esp_err_t result = esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
+
+      flag = false;
+    }
+    
     delay(1);
   }
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   WiFi.mode(WIFI_STA);
   Serial.println(WiFi.macAddress());
 
@@ -232,8 +199,8 @@ void setup() {
 
   pinMode(Ljoystick_x_pin, INPUT);
   pinMode(Ljoystick_y_pin, INPUT);
-  //pinMode(Rjoystick_x_pin, INPUT);
-  //pinMode(Rjoystick_y_pin, INPUT);
+  pinMode(Rjoystick_x_pin, INPUT);
+  pinMode(Rjoystick_y_pin, INPUT);
 }
 
 void loop() {
@@ -248,11 +215,11 @@ void loop() {
     down_interrupt();
   }
 
-  xSemaphoreAltTake(batton, portMAX_DELAY);
+  noInterrupts();
   X_axis = soften_value(mapfloat(axis[2], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000;
   Y_axis = soften_value(mapfloat(axis[3], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000;
   W_axis = soften_value(mapfloat(axis[0], -2048, 2047, -max_rotation_speed, max_rotation_speed),softening, max_rotation_speed) * 1000;
-  xSemaphoreAltGive(batton);
+  interrupts();
 
   if (abs(X_axis) < deadband){
     X_axis = 0;
