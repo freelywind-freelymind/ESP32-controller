@@ -2,22 +2,20 @@
 #include <esp_now.h>
 #include <WiFi.h>
 
-// Structure example to receive data
-// Must match the sender structure
-typedef struct struct_message {
-    char butt_no;
-} struct_message;
+typedef struct chassis_msg {
+  float x_axis;
+  float y_axis;
+  float w_axis;
+} chassis_msg;
 
-// Create a struct_message called myData
-struct_message myData;
+chassis_msg chassis_order;
+
+volatile bool flag = false;
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
-  memcpy(&myData, incomingData, sizeof(myData));
-  /*Serial.print("Button: ");
-  Serial.print(myData.butt_no);
-  Serial.println();*/
-  Serial.print(myData.butt_no);
+  memcpy(&chassis_order, incomingData, sizeof(chassis_order));
+  flag = true;
 }
  
 void setup() {
@@ -41,5 +39,14 @@ void setup() {
 }
  
 void loop() {
+  if(flag){
+    /*Serial.print("Button: ");
+    Serial.print(chassis_order.butt_no);
+    Serial.println();*/
+    Serial.print(chassis_order.butt_no);
+
+    flag = false;
+  }
+
   delay(1);
 }
