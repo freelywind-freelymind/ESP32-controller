@@ -55,11 +55,11 @@ void setup() {
  
 void loop() {
   if(flag){
-    /*Serial.print("Button: ");
+    Serial.print("Button: ");
     Serial.print(upper_order.butt_no);
-    Serial.println();*/
+    Serial.println();
 
-    CAN.beginPacket(package_id, 1);
+    CAN.beginPacket(package_id, package_size);
     CAN.write(upper_order.butt_no);
     //send the package
     CAN.endPacket();
