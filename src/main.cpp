@@ -75,6 +75,4 @@ void loop() {
 
     flag = false;
   }
-
-  vTaskDelay(1);
 }
