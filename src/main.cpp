@@ -6,7 +6,7 @@
 
 // REPLACE WITH YOUR RECEIVER MAC Address
 uint8_t upperAddress[] = {0x94, 0xB9, 0x7E, 0xFA, 0x4D, 0x00};
-uint8_t chassisAddress[] = {0x58, 0xBF, 0x25, 0x18, 0xC7, 0x0C};
+uint8_t chassisAddress[] = {0x58, 0xBF, 0x25, 0x18, 0xB4, 0x84};
 
 typedef struct chassis_msg {
   int16_t x_axis;
@@ -27,7 +27,7 @@ esp_now_peer_info_t peerInfo_chassis;
 }*/
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   Serial.print("The MAC address is ");
   Serial.println(WiFi.macAddress());
