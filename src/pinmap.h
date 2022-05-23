@@ -1,3 +1,10 @@
+//when using wifi/2.4GHz function, 
+//ADC2 will be disable for analog read/write
+//digital read/write is fine
+
+//avoid to use 36(VP), 39(VN), 12(VDD_Flash), 6~11(flash memory),
+//0(boot), 15(LOG), 5(SDIO)
+
 #define Ljoystick_x_pin 32
 #define Ljoystick_y_pin 33
 #define L1_pin  2

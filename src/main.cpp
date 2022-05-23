@@ -9,9 +9,9 @@ uint8_t upperAddress[] = {0x58, 0xBF, 0x25, 0x18, 0xB4, 0x84};
 uint8_t chassisAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 typedef struct chassis_msg {
-  float x_axis;
-  float y_axis;
-  float w_axis;
+  int16_t x_axis;
+  int16_t y_axis;
+  int16_t w_axis;
 } chassis_msg;
 
 chassis_msg chassis_order;
@@ -20,10 +20,11 @@ esp_now_peer_info_t peerInfo_upper;
 esp_now_peer_info_t peerInfo_chassis;
 
 // callback when data is sent
-void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+//Serial in the interrupt may leading the hang
+/*void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
-}
+}*/
 
 void setup() {
   Serial.begin(9600);
@@ -37,7 +38,8 @@ void setup() {
     return;
   }
 
-  // get the status of Trasnmitted packet
+  //for debug only
+  //enable it may leading the hang/bug
   //esp_now_register_send_cb(OnDataSent);
   
   peerInfo_upper.channel = 0;  
@@ -72,9 +74,9 @@ void loop() {
     flag = false;
   }
 
-  X_axis = soften_value(mapfloat(axis[2], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000;
-  Y_axis = soften_value(mapfloat(axis[3], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000;
-  W_axis = soften_value(mapfloat(axis[0], -2048, 2047, -max_rotation_speed, max_rotation_speed),softening, max_rotation_speed) * 1000;
+  X_axis = (int16_t)(soften_value(mapfloat(axis[2], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000);
+  Y_axis = (int16_t)(soften_value(mapfloat(axis[3], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000);
+  W_axis = (int16_t)(soften_value(mapfloat(axis[0], -2048, 2047, -max_rotation_speed, max_rotation_speed),softening, max_rotation_speed) * 1000);
 
   if (abs(X_axis) < deadband){
     X_axis = 0;

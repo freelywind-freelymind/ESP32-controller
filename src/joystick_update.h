@@ -9,9 +9,9 @@ typedef struct upper_msg {
 upper_msg upper_order;
 
 int axis[4];
-float X_axis;
-float Y_axis;
-float W_axis;
+int16_t X_axis;
+int16_t Y_axis;
+int16_t W_axis;
 
 float softening = 0.2;
 float max_speed = 1.0;
