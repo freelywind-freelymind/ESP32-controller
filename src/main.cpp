@@ -27,12 +27,14 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
  
 void setup() {
   // Initialize Serial Monitor
-  Serial.begin(115200);
+  Serial.begin(9600);
   
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
 
-  //Serial.println(WiFi.macAddress());
+  //print its MAC address
+  Serial.print("The MAC address is ");
+  Serial.println(WiFi.macAddress());
 
   // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
