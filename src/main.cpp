@@ -56,9 +56,12 @@ void setup() {
  
 void loop() {
   if(flag){
-    /*Serial.print("Button: ");
-    Serial.print(chassis_order.butt_no);
-    Serial.println();*/
+    Serial.print("X: ");
+    Serial.print(chassis_order.x_axis);
+    Serial.print(" Y: ");
+    Serial.print(chassis_order.y_axis);
+    Serial.print(" W: ");
+    Serial.println(chassis_order.w_axis);
 
     CAN.beginPacket(0x12);
     CAN.write(chassis_order.x_axis >> 8);
