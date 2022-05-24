@@ -63,7 +63,7 @@ void loop() {
     Serial.print(" W: ");
     Serial.println(chassis_order.w_axis);
 
-    CAN.beginPacket(0x12);
+    CAN.beginPacket(package_id, package_size);
     CAN.write(chassis_order.x_axis >> 8);
     CAN.write(chassis_order.x_axis & 0xFF);
     CAN.write(chassis_order.y_axis >> 8);
