@@ -74,9 +74,9 @@ void loop() {
     flag = false;
   }
 
-  X_axis = (int16_t)(soften_value(mapfloat(axis[2], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000);
-  Y_axis = (int16_t)(soften_value(mapfloat(axis[3], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000);
-  W_axis = (int16_t)(soften_value(mapfloat(axis[0], -2048, 2047, -max_rotation_speed, max_rotation_speed),softening, max_rotation_speed) * 1000);
+  X_axis = -(int16_t)(soften_value(mapfloat(axis[3], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000);
+  Y_axis = (int16_t)(soften_value(mapfloat(axis[2], -2048, 2047, -max_speed, max_speed),softening, max_speed) * 1000);
+  W_axis = -(int16_t)(soften_value(mapfloat(axis[1], -2048, 2047, -max_rotation_speed, max_rotation_speed),softening, max_rotation_speed) * 1000);
 
   if (abs(X_axis) < deadband){
     X_axis = 0;
