@@ -16,8 +16,7 @@ typedef struct chassis_msg {
 
 chassis_msg chassis_order;
 
-esp_now_peer_info_t peerInfo_upper;
-esp_now_peer_info_t peerInfo_chassis;
+esp_now_peer_info_t peerInfo;
 
 // callback when data is sent
 //Serial in the interrupt may leading the hang
@@ -42,19 +41,19 @@ void setup() {
   //enable it may leading the hang/bug
   //esp_now_register_send_cb(OnDataSent);
   
-  peerInfo_upper.channel = 0;  
-  peerInfo_upper.encrypt = false;
+  peerInfo.channel = 0;  
+  peerInfo.encrypt = false;
   
   // Register peer
-  memcpy(peerInfo_upper.peer_addr, upperAddress, 6);
+  memcpy(peerInfo.peer_addr, upperAddress, 6);
   // Add peer        
-  if (esp_now_add_peer(&peerInfo_upper) != ESP_OK){
+  if (esp_now_add_peer(&peerInfo) != ESP_OK){
     Serial.println("Failed to add peer");
     return;
   }
 
-  memcpy(peerInfo_chassis.peer_addr, chassisAddress, 6);
-  if (esp_now_add_peer(&peerInfo_chassis) != ESP_OK){
+  memcpy(peerInfo.peer_addr, chassisAddress, 6);
+  if (esp_now_add_peer(&peerInfo) != ESP_OK){
     Serial.println("Failed to add peer");
     return;
   }
@@ -88,13 +87,19 @@ void loop() {
     W_axis = 0;
   }
 
-  Serial.print("X:");
+  if(upper_order.butt_no == estop){
+    X_axis = 0;
+    Y_axis = 0;
+    W_axis = 0;
+  }
+
+  /*Serial.print("X:");
   Serial.print(X_axis);
   Serial.print(" Y:");
   Serial.print(Y_axis);
   Serial.print(" W:");
   Serial.print(W_axis);
-  Serial.println("");
+  Serial.println("");*/
 
   //update the msg of package
   chassis_order.x_axis = X_axis;
