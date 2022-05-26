@@ -21,6 +21,7 @@ float max_speed = 1.0;
 float max_rotation_speed = 1.0;
 int deadband = 110;
 
+bool estop_flag = false;
 bool* butt_flag = new bool[14]{false,false,false,false,false,false,false,
                               false,false,false,false,false,false,false};
 
@@ -60,38 +61,6 @@ float soften_value(float axis, float soften, float max_v){
 void joystick_update(){
   int temp = 0;
   bool none_flag = true;
-
-  temp = analogRead(Ljoystick_x_pin);
-  if(temp < 0) {
-    axis[0] = -(temp) - 2046;
-  }
-  else{
-    axis[0] = 2047 - temp;
-  }
-
-  temp = analogRead(Ljoystick_y_pin);
-  if(temp < 0) {
-    axis[1] = -(temp) - 2046;
-  }
-  else{
-    axis[1] = 2047 - temp;
-  }
-
-  temp = analogRead(Rjoystick_x_pin);
-  if(temp < 0) {
-    axis[2] = -(temp) - 2046;
-  }
-  else{
-    axis[2] = 2047 - temp;
-  }
-
-  temp = analogRead(Rjoystick_y_pin);
-  if(temp < 0) {
-    axis[3] = -(temp) - 2046;
-  }
-  else{
-    axis[3] = 2047 - temp;
-  }
 
   //debouncing
   if(digitalRead(up_pin)){
@@ -257,6 +226,8 @@ void joystick_update(){
     if(!butt_flag[13]){
       butt_flag[13] = !butt_flag[13];
       msg.butt_no = estop;
+
+      estop_flag = !estop_flag;
     }   
   }
   else{
@@ -270,5 +241,37 @@ void joystick_update(){
   }
   if(none_flag){
     msg.butt_no = none;
+  }
+
+  temp = analogRead(Ljoystick_x_pin);
+  if(temp < 0) {
+    axis[0] = -(temp) - 2046;
+  }
+  else{
+    axis[0] = 2047 - temp;
+  }
+
+  temp = analogRead(Ljoystick_y_pin);
+  if(temp < 0) {
+    axis[1] = -(temp) - 2046;
+  }
+  else{
+    axis[1] = 2047 - temp;
+  }
+
+  temp = analogRead(Rjoystick_x_pin);
+  if(temp < 0) {
+    axis[2] = -(temp) - 2046;
+  }
+  else{
+    axis[2] = 2047 - temp;
+  }
+
+  temp = analogRead(Rjoystick_y_pin);
+  if(temp < 0) {
+    axis[3] = -(temp) - 2046;
+  }
+  else{
+    axis[3] = 2047 - temp;
   }
 }

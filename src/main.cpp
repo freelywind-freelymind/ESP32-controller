@@ -70,10 +70,11 @@ void loop() {
     W_axis = 0;
   }
 
-  if(msg.butt_no == estop){
+  if(estop_flag){
     X_axis = 0;
     Y_axis = 0;
     W_axis = 0;
+    msg.butt_no = estop;
   }
 
   //Serial.printf("Button %c had been pressed.\n", msg.butt_no);
