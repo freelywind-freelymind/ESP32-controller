@@ -9,17 +9,20 @@ const long baudrate = 1000000;
 const int package_id = 0x12;
 const int package_size = 1;
 
-typedef struct upper_msg {
-  char butt_no;
-} upper_msg;
+const char none = '0';
 
-upper_msg upper_order;
+typedef struct package {
+  char butt_no;
+} package;
+
+package msg;
 
 bool flag = false;
+char lastChar = '0';
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
-  memcpy(&upper_order, incomingData, sizeof(upper_order));
+  memcpy(&msg, incomingData, sizeof(msg));
 
   flag = true;
 }
@@ -55,15 +58,19 @@ void setup() {
  
 void loop() {
   if(flag){
-    Serial.print("Button: ");
-    Serial.print(upper_order.butt_no);
-    Serial.println();
+    if(msg.butt_no != none && msg.butt_no != lastChar){
+      
+      Serial.print("Button: ");
+      Serial.print(msg.butt_no);
+      Serial.println();
 
-    CAN.beginPacket(package_id, package_size);
-    CAN.write((uint8_t)upper_order.butt_no);
-    //send the package
-    CAN.endPacket();
+      CAN.beginPacket(package_id, package_size);
+      CAN.write(msg.butt_no);
+      //send the package
+      CAN.endPacket();
+    }
 
+    lastChar = msg.butt_no;
     flag = false;
   }
 }
