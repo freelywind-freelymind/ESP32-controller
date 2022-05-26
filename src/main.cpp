@@ -8,15 +8,6 @@
 uint8_t upperAddress[] = {0x94, 0xB9, 0x7E, 0xFA, 0x4D, 0x00};
 uint8_t chassisAddress[] = {0x58, 0xBF, 0x25, 0x18, 0xB4, 0x84};
 
-typedef struct package {
-  int16_t x_axis;
-  int16_t y_axis;
-  int16_t w_axis;
-  char butt_no;
-} package;
-
-package msg;
-
 esp_now_peer_info_t peerInfo;
 
 // callback when data is sent
@@ -79,13 +70,13 @@ void loop() {
     W_axis = 0;
   }
 
-  if(upper_order.butt_no == estop){
+  if(msg.butt_no == estop){
     X_axis = 0;
     Y_axis = 0;
     W_axis = 0;
   }
 
-  //Serial.printf("Button %c had been pressed.\n", upper_order.butt_no);
+  //Serial.printf("Button %c had been pressed.\n", msg.butt_no);
   /*Serial.print("X:");
   Serial.print(X_axis);
   Serial.print(" Y:");

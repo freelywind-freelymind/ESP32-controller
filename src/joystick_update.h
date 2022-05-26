@@ -7,6 +7,15 @@ int16_t X_axis;
 int16_t Y_axis;
 int16_t W_axis;
 
+typedef struct package {
+  int16_t x_axis;
+  int16_t y_axis;
+  int16_t w_axis;
+  char butt_no;
+} package;
+
+package msg;
+
 float softening = 0.2;
 float max_speed = 1.0;
 float max_rotation_speed = 1.0;
