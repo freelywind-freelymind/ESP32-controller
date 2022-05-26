@@ -12,6 +12,9 @@ const int package_size = 1;
 const char none = '0';
 
 typedef struct package {
+  int16_t x_axis;
+  int16_t y_axis;
+  int16_t w_axis;
   char butt_no;
 } package;
 
