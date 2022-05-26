@@ -15,7 +15,7 @@ typedef struct upper_msg {
 
 upper_msg upper_order;
 
-volatile bool flag = false;
+bool flag = false;
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
@@ -60,12 +60,10 @@ void loop() {
     Serial.println();
 
     CAN.beginPacket(package_id, package_size);
-    CAN.write(upper_order.butt_no);
+    CAN.write((uint8_t)upper_order.butt_no);
     //send the package
     CAN.endPacket();
 
     flag = false;
   }
-
-  vTaskDelay(1);
 }
