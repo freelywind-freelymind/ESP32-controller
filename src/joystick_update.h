@@ -2,12 +2,6 @@
 #include "pinmap.h"
 #include "buttCode.h"
 
-typedef struct upper_msg {
-  char butt_no;
-} upper_msg;
-
-upper_msg upper_order;
-
 int axis[4];
 int16_t X_axis;
 int16_t Y_axis;
@@ -95,7 +89,7 @@ void joystick_update(){
     if(!butt_flag[0]){
       butt_flag[0] = !butt_flag[0];
 
-      upper_order.butt_no = up;
+      msg.butt_no = up;
       if (max_speed <= 3.0) {
         max_speed += 0.5;
       }
@@ -110,7 +104,7 @@ void joystick_update(){
     if(!butt_flag[1]){
       butt_flag[1] = !butt_flag[1];
 
-      upper_order.butt_no = down;
+      msg.butt_no = down;
       if (max_speed >= 1.0) {
         max_speed -= 0.5;
       }
@@ -125,7 +119,7 @@ void joystick_update(){
     if(!butt_flag[2]){
       butt_flag[2] = !butt_flag[2];
 
-      upper_order.butt_no = left;
+      msg.butt_no = left;
       if (softening >= 0.05){
         softening -= 0.2;
       }
@@ -140,7 +134,7 @@ void joystick_update(){
     if(!butt_flag[3]){
       butt_flag[3] = !butt_flag[3];
 
-      upper_order.butt_no = right;
+      msg.butt_no = right;
       if (softening <= 0.8){
         softening += 0.2;
       }
@@ -154,7 +148,7 @@ void joystick_update(){
   if(digitalRead(L1_pin)){
     if(!butt_flag[4]){
       butt_flag[4] = !butt_flag[4];
-      upper_order.butt_no = L1;
+      msg.butt_no = L1;
     }   
   }
   else{
@@ -165,7 +159,7 @@ void joystick_update(){
   if(digitalRead(L2_pin)){
     if(!butt_flag[5]){
       butt_flag[5] = !butt_flag[5];
-      upper_order.butt_no = L2;
+      msg.butt_no = L2;
     }   
   }
   else{
@@ -176,7 +170,7 @@ void joystick_update(){
   if(digitalRead(R1_pin)){
     if(!butt_flag[6]){
       butt_flag[6] = !butt_flag[6];
-      upper_order.butt_no = R1;
+      msg.butt_no = R1;
     }   
   }
   else{
@@ -187,7 +181,7 @@ void joystick_update(){
   if(digitalRead(R2_pin)){
     if(!butt_flag[7]){
       butt_flag[7] = !butt_flag[7];
-      upper_order.butt_no = R2;
+      msg.butt_no = R2;
     }   
   }
   else{
@@ -198,7 +192,7 @@ void joystick_update(){
   if(digitalRead(triangle_pin)){
     if(!butt_flag[8]){
       butt_flag[8] = !butt_flag[8];
-      upper_order.butt_no = triangle;
+      msg.butt_no = triangle;
     }   
   }
   else{
@@ -209,7 +203,7 @@ void joystick_update(){
   if(digitalRead(circle_pin)){
     if(!butt_flag[9]){
       butt_flag[9] = !butt_flag[9];
-      upper_order.butt_no = circle;
+      msg.butt_no = circle;
     }   
   }
   else{
@@ -220,7 +214,7 @@ void joystick_update(){
   if(digitalRead(square_pin)){
     if(!butt_flag[10]){
       butt_flag[10] = !butt_flag[10];
-      upper_order.butt_no = square;
+      msg.butt_no = square;
     }   
   }
   else{
@@ -231,7 +225,7 @@ void joystick_update(){
   if(digitalRead(cross_pin)){
     if(!butt_flag[11]){
       butt_flag[11] = !butt_flag[11];
-      upper_order.butt_no = cross;
+      msg.butt_no = cross;
     }   
   }
   else{
@@ -242,7 +236,7 @@ void joystick_update(){
   if(digitalRead(question_pin)){
     if(!butt_flag[12]){
       butt_flag[12] = !butt_flag[12];
-      upper_order.butt_no = question;
+      msg.butt_no = question;
     }   
   }
   else{
@@ -253,7 +247,7 @@ void joystick_update(){
   if(digitalRead(estop_pin)){
     if(!butt_flag[13]){
       butt_flag[13] = !butt_flag[13];
-      upper_order.butt_no = estop;
+      msg.butt_no = estop;
     }   
   }
   else{
@@ -266,6 +260,6 @@ void joystick_update(){
     }
   }
   if(none_flag){
-    upper_order.butt_no = none;
+    msg.butt_no = none;
   }
 }

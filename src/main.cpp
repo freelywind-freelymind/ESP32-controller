@@ -5,16 +5,17 @@
 #include "joystick_update.h"
 
 // REPLACE WITH YOUR RECEIVER MAC Address
-uint8_t chassisAddress[] = {0x94, 0xB9, 0x7E, 0xFA, 0x4D, 0x00};
-uint8_t upperAddress[] = {0x58, 0xBF, 0x25, 0x18, 0xB4, 0x84};
+uint8_t upperAddress[] = {0x94, 0xB9, 0x7E, 0xFA, 0x4D, 0x00};
+uint8_t chassisAddress[] = {0x58, 0xBF, 0x25, 0x18, 0xB4, 0x84};
 
-typedef struct chassis_msg {
+typedef struct package {
   int16_t x_axis;
   int16_t y_axis;
   int16_t w_axis;
-} chassis_msg;
+  char butt_no;
+} package;
 
-chassis_msg chassis_order;
+package msg;
 
 esp_now_peer_info_t peerInfo;
 
@@ -85,9 +86,6 @@ void loop() {
   }
 
   //Serial.printf("Button %c had been pressed.\n", upper_order.butt_no);
-  // Send message via ESP-NOW
-  esp_now_send(upperAddress, (uint8_t *) &upper_order, sizeof(upper_order));
-
   /*Serial.print("X:");
   Serial.print(X_axis);
   Serial.print(" Y:");
@@ -97,11 +95,11 @@ void loop() {
   Serial.println("");*/
 
   //update the msg of package
-  chassis_order.x_axis = X_axis;
-  chassis_order.y_axis = Y_axis;
-  chassis_order.w_axis = W_axis;
+  msg.x_axis = X_axis;
+  msg.y_axis = Y_axis;
+  msg.w_axis = W_axis;
   // Send message via ESP-NOW
-  esp_now_send(chassisAddress, (uint8_t *) &chassis_order, sizeof(chassis_order));
+  esp_now_send(0, (uint8_t *) &msg, sizeof(msg));
 
   //update freq 100Hz
   vTaskDelay(10);
