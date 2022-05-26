@@ -18,7 +18,6 @@ float max_speed = 1.0;
 float max_rotation_speed = 1.0;
 int deadband = 110;
 
-bool flag = false;
 bool* butt_flag = new bool[14]{false,false,false,false,false,false,false,
                               false,false,false,false,false,false,false};
 
@@ -46,85 +45,6 @@ void init_pinout(){
   pinMode(Rjoystick_y_pin, INPUT);
 }
 
-void L1_interrupt(){
-  upper_order.butt_no = L1;
-  flag = true;
-}
-void L2_interrupt(){
-  upper_order.butt_no = L2;
-  flag = true;
-}
-void up_interrupt(){
-  upper_order.butt_no = up;
-
-  if (max_speed <= 3.0) {
-    max_speed += 0.5;
-  }
-  
-  flag = true;
-}
-void left_interrupt(){
-  upper_order.butt_no = left;
-
-  if (softening >= 0.05){
-    softening -= 0.2;
-  }
-
-  flag = true;
-}
-void down_interrupt(){
-  upper_order.butt_no = down;
-
-  if (max_speed >= 1.0) {
-    max_speed -= 0.5;
-  }
-
-  flag = true;
-}
-void right_interrupt(){
-  upper_order.butt_no = right;
-
-  if (softening <= 0.8){
-    softening += 0.2;
-  }
-
-  flag = true;
-}
-
-void R1_interrupt(){
-  upper_order.butt_no = R1;
-  flag = true;
-}
-void R2_interrupt(){
-  upper_order.butt_no = R2;
-  flag = true;
-}
-void triangle_interrupt(){
-  upper_order.butt_no = triangle;
-  flag = true;
-}
-void circle_interrupt(){
-  upper_order.butt_no = circle;
-  flag = true;
-}
-void square_interrupt(){
-  upper_order.butt_no = square;
-  flag = true;
-}
-void cross_interrupt(){
-  upper_order.butt_no = cross;
-  flag = true;
-}
-
-void question_interrupt(){
-  upper_order.butt_no = question;
-  flag = true;
-}
-void estop_interrupt(){
-  upper_order.butt_no = estop;
-  flag = true;
-}
-
 float mapfloat(long x, float in_min, float in_max, float out_min, float out_max)
 {
   return (float)(x - in_min) * (out_max - out_min) / (float)(in_max - in_min) + out_min;
@@ -136,6 +56,7 @@ float soften_value(float axis, float soften, float max_v){
 
 void joystick_update(){
   int temp = 0;
+  bool none_flag = true;
 
   temp = analogRead(Ljoystick_x_pin);
   if(temp < 0) {
@@ -173,7 +94,11 @@ void joystick_update(){
   if(digitalRead(up_pin)){
     if(!butt_flag[0]){
       butt_flag[0] = !butt_flag[0];
-      up_interrupt();
+
+      upper_order.butt_no = up;
+      if (max_speed <= 3.0) {
+        max_speed += 0.5;
+      }
     }   
   }
   else{
@@ -184,7 +109,11 @@ void joystick_update(){
   if(digitalRead(down_pin)){
     if(!butt_flag[1]){
       butt_flag[1] = !butt_flag[1];
-      down_interrupt();
+
+      upper_order.butt_no = down;
+      if (max_speed >= 1.0) {
+        max_speed -= 0.5;
+      }
     }
   }
   else{
@@ -195,7 +124,11 @@ void joystick_update(){
   if(digitalRead(left_pin)){
     if(!butt_flag[2]){
       butt_flag[2] = !butt_flag[2];
-      left_interrupt();
+
+      upper_order.butt_no = left;
+      if (softening >= 0.05){
+        softening -= 0.2;
+      }
     }
   }
   else{
@@ -206,7 +139,11 @@ void joystick_update(){
   if(digitalRead(right_pin)){
     if(!butt_flag[3]){
       butt_flag[3] = !butt_flag[3];
-      right_interrupt();
+
+      upper_order.butt_no = right;
+      if (softening <= 0.8){
+        softening += 0.2;
+      }
     }
   }
   else{
@@ -217,7 +154,7 @@ void joystick_update(){
   if(digitalRead(L1_pin)){
     if(!butt_flag[4]){
       butt_flag[4] = !butt_flag[4];
-      L1_interrupt();
+      upper_order.butt_no = L1;
     }   
   }
   else{
@@ -228,7 +165,7 @@ void joystick_update(){
   if(digitalRead(L2_pin)){
     if(!butt_flag[5]){
       butt_flag[5] = !butt_flag[5];
-      L2_interrupt();
+      upper_order.butt_no = L2;
     }   
   }
   else{
@@ -239,7 +176,7 @@ void joystick_update(){
   if(digitalRead(R1_pin)){
     if(!butt_flag[6]){
       butt_flag[6] = !butt_flag[6];
-      R1_interrupt();
+      upper_order.butt_no = R1;
     }   
   }
   else{
@@ -250,7 +187,7 @@ void joystick_update(){
   if(digitalRead(R2_pin)){
     if(!butt_flag[7]){
       butt_flag[7] = !butt_flag[7];
-      R2_interrupt();
+      upper_order.butt_no = R2;
     }   
   }
   else{
@@ -261,7 +198,7 @@ void joystick_update(){
   if(digitalRead(triangle_pin)){
     if(!butt_flag[8]){
       butt_flag[8] = !butt_flag[8];
-      triangle_interrupt();
+      upper_order.butt_no = triangle;
     }   
   }
   else{
@@ -272,7 +209,7 @@ void joystick_update(){
   if(digitalRead(circle_pin)){
     if(!butt_flag[9]){
       butt_flag[9] = !butt_flag[9];
-      circle_interrupt();
+      upper_order.butt_no = circle;
     }   
   }
   else{
@@ -283,7 +220,7 @@ void joystick_update(){
   if(digitalRead(square_pin)){
     if(!butt_flag[10]){
       butt_flag[10] = !butt_flag[10];
-      square_interrupt();
+      upper_order.butt_no = square;
     }   
   }
   else{
@@ -294,7 +231,7 @@ void joystick_update(){
   if(digitalRead(cross_pin)){
     if(!butt_flag[11]){
       butt_flag[11] = !butt_flag[11];
-      cross_interrupt();
+      upper_order.butt_no = cross;
     }   
   }
   else{
@@ -305,7 +242,7 @@ void joystick_update(){
   if(digitalRead(question_pin)){
     if(!butt_flag[12]){
       butt_flag[12] = !butt_flag[12];
-      question_interrupt();
+      upper_order.butt_no = question;
     }   
   }
   else{
@@ -316,10 +253,19 @@ void joystick_update(){
   if(digitalRead(estop_pin)){
     if(!butt_flag[13]){
       butt_flag[13] = !butt_flag[13];
-      estop_interrupt();
+      upper_order.butt_no = estop;
     }   
   }
   else{
     butt_flag[13] = false;
+  }
+
+  for(int i = 0; i < 14; i++){
+    if(butt_flag[i]){
+      none_flag = false;
+    }
+  }
+  if(none_flag){
+    upper_order.butt_no = none;
   }
 }

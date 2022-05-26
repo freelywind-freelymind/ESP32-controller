@@ -16,3 +16,5 @@ const char cross = 'c';
 
 const char question = 'd';
 const char estop = 'x';
+
+const char none = '0';
