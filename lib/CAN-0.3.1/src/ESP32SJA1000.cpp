@@ -180,9 +180,19 @@ int ESP32SJA1000Class::endPacket()
     return 0;
   }
 
+  const uint8_t TIMEOUTVALUE = 50;
+  uint8_t uiTimeOut = 0;
+
   // wait for TX buffer to free
-  while ((readRegister(REG_SR) & 0x04) != 0x04) {
+  while ((readRegister(REG_SR) & 0x04) != 0x04 && 
+          uiTimeOut < TIMEOUTVALUE) {
     yield();
+    uiTimeOut++;
+
+    if(uiTimeOut >= TIMEOUTVALUE){
+      uiTimeOut = 0;
+      break;
+    }
   }
 
   int dataReg;
@@ -215,13 +225,21 @@ int ESP32SJA1000Class::endPacket()
     modifyRegister(REG_CMR, 0x1f, 0x01);
   }
 
+  uiTimeOut = 0;
   // wait for TX complete
-  while ((readRegister(REG_SR) & 0x08) != 0x08) {
+  while ((readRegister(REG_SR) & 0x08) != 0x08 && 
+          uiTimeOut < TIMEOUTVALUE) {
     if (readRegister(REG_ECC) == 0xd9) {
       modifyRegister(REG_CMR, 0x1f, 0x02); // error, abort
       return 0;
     }
     yield();
+    uiTimeOut++;
+
+    if(uiTimeOut >= TIMEOUTVALUE){
+      uiTimeOut = 0;
+      break;
+    }
   }
 
   return 1;
